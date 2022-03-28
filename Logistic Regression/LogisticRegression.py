@@ -8,35 +8,6 @@ Group members: Nie-Binbin  Ma-Shicheng  Cao-Liyu
 
 import numpy as np
 import matplotlib.pyplot as plt
-import pandas as pd
-from sklearn.datasets import load_iris
-import sklearn
-
-from sklearn.model_selection import train_test_split
-# from numba import jit
-
-def iris_data_preprocess():
-    # load iris dataset
-    iris_data = load_iris()
-    iris_target = iris_data.target
-    iris_features = pd.DataFrame(data=iris_data.data, columns=iris_data.feature_names)
-
-    # copy type 0 and type 1 since we will do two-type classification
-    iris_all = iris_features.copy()    # shallow copy
-    iris_all['target'] = iris_data.target   # add a new feature named target
-    iris_features_part = iris_features.iloc[:100]
-    iris_features_part['one'] = 1
-    iris_target_part = iris_target[:100]
-    
-    # train test set split
-    X_train, X_test, y_train, y_test = train_test_split(
-        iris_features_part, iris_target_part, test_size=0.3)
-    
-    
-    
-    
-    return np.array(X_train), np.array(X_test), np.array(y_train), np.array(y_test)
-
 
 class LogisticRegression:
     def __init__(self, X_train, X_test, y_train, y_test):
@@ -52,14 +23,14 @@ class LogisticRegression:
 
     def loss_function(self):  # we want to minimize the loss function
         res = np.dot(self.X_train, self.w) * \
-            self.y_train.reshape((len(y_train), 1))
+            self.y_train.reshape((len(self.y_train), 1))
         res -= np.log(1 + np.exp(np.dot(self.X_train, self.w)))
         res = -np.sum(res)
         return res
 
     def gradient(self):  # witten by NBB
         res = self.y_train - np.exp(np.dot(self.X_train, self.w))/(1+np.exp(np.dot(self.X_train, self.w)))
-        res = - np.sum(res*X_train, axis=0)
+        res = - np.sum(res*self.X_train, axis=0)
         res = res.reshape((-1,1))
         return res
 
@@ -134,11 +105,4 @@ class LogisticRegression:
             for second_index in range(len(confuse_matrix)):    #第几列
                 plt.text(first_index, second_index, confuse_matrix[first_index][second_index])
             
-
-X_train, X_test, y_train, y_test = iris_data_preprocess()
-iris_classification = LogisticRegression(X_train, X_test, y_train, y_test)
-N = 1000000
-iris_classification.propagate(N)
-print('Classification accuracy is {}%'.format(iris_classification.predict()*100))
-iris_classification.confuseMatrix()
 
